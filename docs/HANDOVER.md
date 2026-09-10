@@ -7,9 +7,11 @@
 - ユーザーの「音は出るが添付MP3の声ではない」という報告から、録音ファイルがアプリに入っておらず、端末の読み上げへ代替していたことを確認したでやんす。
 - ユーザーのダウンロード先にあった「正解でやんす.mp3」と「外れでやんす.mp3」を無加工で `assets/yansu-voice-correct.mp3` と `assets/yansu-voice-wrong.mp3` へコピーしたでやんす。lib/yansu-voice.tsで必須の音声として直接参照し、components/practice-audio.tsxから正誤音声の端末読み上げへの代替を削除したでやんす。問題文の読み上げとテスト中に正誤を知らせない動作は維持したでやんす。
 - app/page.tsx、app/globals.cssへ音声クレジットを追加したでやんす。直前に保存された同じ台詞の元WAV名「春歌ナナ（ノーマル）」を出典判断の根拠としたでやんす。README.md、docs/YANSU.md、この記録を更新したでやんす。
-- 作業用のprepare-github-publish.mjsはMP3をバイナリとして扱うように更新したでやんす。check-built-app.mjsとcheck-published.mjsは、音声ファイルの同梱・参照・完全一致と公開時のaudio/mpegを検査するように更新したでやんす。
+- 作業用のprepare-github-publish.mjsはMP3をバイナリとして扱うように更新したでやんす。check-built-app.mjsとcheck-published.mjsは、音声ファイルの同梱・参照・完全一致と公開時の音声Content-Typeを検査するように更新したでやんす。
 - `npm test`：48項目成功、`npm run typecheck`、`npm run lint`：成功でやんす。Node.js 22.22.0で/kumowa向けのビルドと `node scripts/check-export.mjs`：成功でやんす。`node work/check-built-app.mjs kumowa`：画像2枚・音声2本の同梱と参照、秘密値の除外が成功したでやんす。
 - 元のMP3とソース内MP3がバイト単位で同一であることを確認したでやんす。正解は6,188バイト、Git blob SHAは2c8edb15a4a3765aec88a46984600ea484579855、不正解は5,420バイト、SHAは1cfe329f41ad4c44dc0402a66236dfdd20322b26でやんす。
+- 修正版のソース733462fa4b2c2d43519e034e8a57f46e6350ddea、公開用a6e12fda3957c8e3ba913f5278b55be5423d9b14を登録したでやんす。Pages配信処理34462399142のsuccessを確認したでやんす。`node work/check-published.mjs`：16ファイル、画像2枚、音声2本、秘密値除外の検査が成功したでやんす。公開MP3も同じGit blob SHAでやんす。
+- 初回の公開検査は、GitHubが返したaudio/mp3をaudio/mpegだけの期待値で拒否したでやんす。取得した音声本体は同一で、検査側を両方の音声Content-Typeに対応させて再実行し成功したでやんす。`Invoke-WebRequest http://localhost:3000/` はHTTP 200でやんす。配布ZIPを更新し、ソース123件・公開用16件を確認したでやんす。
 - Claude CodeをOpus4.8指定の読み取り専用レビューで実行したが、Not logged inで失敗したでやんす。相互レビューは未実施でやんす。実機iPhoneでのスピーカー再生は未確認で、公開後に新しいページで音と声をオンにして確かめるでやんす。
 - 次回はこの2本のMP3を維持し、声の再生成や端末読み上げへの変更を勝手に行わないでやんす。公開先は同じGitHub Pagesで、反映後の検証結果は出力の開発記録.mdにも残すでやんす。
 
