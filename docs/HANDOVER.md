@@ -1,6 +1,31 @@
 # くもわアプリ 開発記録・引き継ぎ
 
-記録日：2026-09-10でやんす。最新の実装状態は「追加変更：日別テスト・法則・認証・メール・ヤンス君」の節でやんす。過去の検証回数は当時の記録でやんす。
+記録日：2026-09-10でやんす。現在の公開状態は直下の節でやんす。それより下は経過の記録で、「未公開」「本人確認待ち」「localhostを許可」は当時の状態でやんす。
+
+## 2026-09-10：GitHub公開完了でやんす
+
+### 完了したタスクと変更したファイルでやんす
+
+- 専用の公開リポジトリ `penpeita/kumowa` を作成し、ソースをmain、検証済みの静的ファイルをgh-pagesに登録したでやんす。公開URLは **https://penpeita.github.io/kumowa/** でやんす。既存の別用途リポジトリ `penpeita/penpeita` は変更していないでやんす。
+- PagesはDeploy from a branch、gh-pages、/(root)で公開中でやんす。GitHub標準の配信処理 `34459467080` と、Pages画面のYour site is liveを確認したでやんす。初回アプリソースは `b303f5c9902ae237bc7b9544b809ef24743f5ffe`、静的ファイルは `3de3e263eb38ba052567aec687d475ce48333a38` でやんす。この後の文書更新はmainの履歴を参照するでやんす。
+- WorkerのAPP_ORIGINだけを `https://penpeita.github.io` に更新し、既存8設定の保持を確認したでやんす。GitHubのRepository variableにREPORT_API_URLを登録し、保存された値を確認したでやんす。秘密値はGitHubへ登録していないでやんす。
+- アプリの処理は48項目のテスト成功時から変更していないでやんす。README.md、docs/MAIL_SETUP.md、この記録を現在の公開状態へ更新したでやんす。作業用のcheck-published.mjsを追加し、worker-check/check-live-mail.mjsは実行時の環境変数で入口パスワードを受け取る形へ変更したでやんす。package-artifacts.ps1は/kumowaの静的出力をZIP直下へ正しく収めるように更新したでやんす。
+
+### 実行した確認・成功と失敗でやんす
+
+- `node work/prepare-github-publish.mjs kumowa`：ソース121ファイル・静的15ファイルを準備し、非公開設定ファイル・宛先・送信キー・開発用照合値を除外する検査が成功したでやんす。
+- `node work/check-published.mjs`：公開ファイル14件の本文またはGit blobハッシュの完全一致を確認したでやんす。画像2枚ともHTTP 200、image/pngで取得できたでやんす。開発用照合値・実際の宛先・RESEND_API_KEYが公開ファイルにない検査も成功したでやんす。
+- `node work/worker-check/set-public-origin.mjs --apply`：初回は認証期限切れ401で失敗したでやんす。既存Wranglerのwhoamiで通常の認証更新を行い、再実行して成功したでやんす。新しい認証権限は追加していないでやんす。
+- `node work/worker-check/check-live-mail.mjs --send-connection-test`：公開ドメインのCORS、別ドメイン403、未認証401、正しいパスワードでの認証が成功したでやんす。前回と同じ接続確認用ID・本文を2回送信し、両方の送信受付が成功したでやんす。以前ResendでDeliveredを確認した1通の再送確認で、子供の成績や回数は変更していないでやんす。Gmail受信箱は開いていないでやんす。
+- 公開前の `npm test` 48項目、`npm run typecheck`、`npm run lint`、Node.js 22.22.0で/kumowaのビルド、`node scripts/check-export.mjs`、`node work/check-built-app.mjs kumowa` は成功したでやんす。文書のみの更新では同じ検査を繰り返していないでやんす。
+- iPhone 16e向けにCSSと公開HTMLを再確認したでやんす。width=device-width、問題文の折り返し、幅560px以下の縮小配置、画面高に応じた円の縮小、セーフエリア余白を確認したでやんす。問題文の高さを固定して切り取る指定はないでやんす。ユーザーが収めたい範囲は「問題文と答えを入れるところ」で、解説・振り返りまで1画面に収める必要はないでやんす。
+
+### 残る課題と次回への引き継ぎでやんす
+
+- 実機iPhone 16e/Safariでの長い問題文、ドラッグ、拡大文字、音声、実際に10問を終えた画面からの送信表示は未確認でやんす。HTTPとコードの検査を実機確認済みと扱わないでやんす。Claude Code Opus4.8の相互レビューはログイン未解決で未実施でやんす。
+- 本番Workerはlocalhostからの認証を拒否するでやんす。ローカル開発では開発環境のVITE_REPORT_API_URLを空にして開発用照合値を使うでやんす。本番のAPP_ORIGINをlocalhostへ戻さないでやんす。
+- mainの変更だけでは公開ページは更新されないでやんす。現在の更新方法は、検査後に/kumowa向けの静的出力と.nojekyllをgh-pages直下へ登録する方法でやんす。手動のpages.ymlは未実行で、移行するときはPagesのSourceをGitHub Actionsへ変更してから実行するでやんす。接続先の変数は登録済みでやんす。
+- 次回は公開済みの `penpeita/kumowa` を継続するでやんす。承認済みのヤンス君2画像、法則中心の解説、2コース各3回、当日誤答の復習、テスト終了時の自動メールを維持するでやんす。公開ソース・ZIPへ秘密値を含めず、Worker更新時は既存のSecretを保持するでやんす。
 
 ## 完了したこと
 

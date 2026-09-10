@@ -2,6 +2,8 @@
 
 小学生向けの割合・百分率アプリでやんす。数字の計算はせず、文章題の読み取りを練習するでやんす。
 
+**[公開アプリを開く](https://penpeita.github.io/kumowa/)** でやんす。専用リポジトリは [penpeita/kumowa](https://github.com/penpeita/kumowa) でやんす。
+
 各コース1,000問、合計2,000問を場面・数値・割合の組み合わせで用意したでやんす。練習はランダムな順番で、対象の問題を一巡するまで重複しないでやんす。一巡後は並べ替えて続けるでやんす。使う割合の初級は700問、上級は300問でやんす。入口へ戻ると新しい順番で始まるでやんす。
 
 - くもわ：文章題の3つの言葉を、円の「く・も・わ」へ指で動かすでやんす。言葉→円の2回タップ、キーボード操作にも対応しているでやんす。
@@ -16,7 +18,7 @@
 - テストは各コース1日3回まででやんす。開始時に1回を数え、戻る・再読み込みでも回数は減ったままでやんす。日本時間で日付を区切り、当日完了したテストの間違いだけを何度でも復習できるでやんす。回数と間違えた問題IDはブラウザ内に保存するでやんす。別端末や保存データ削除に対する厳密な制限ではないでやんす。
 - 振り返りでは、自分の配置と正解の配置を2つのくもわの円で比べるでやんす。
 - 正解と不正解でネズミのヤンス君が○・×を掲げるでやんす。音と声はまとめてオン・オフするでやんす。正解音は華やかに、不正解音は短く控えめでやんす。録音を埋め込む準備と画像の生成記録は `docs/YANSU.md` でやんす。
-- 固定パスワードの入口と、自動メール送信に対応したでやんす。CloudflareとResendを接続し、現在のローカル画面でもサーバーでパスワードを照合するでやんす。接続確認メール1通の配送完了と重複防止を確認したでやんす。GitHub公開時には許可する画面のドメインを更新するでやんす。設定手順と保管場所は `docs/MAIL_SETUP.md` でやんす。
+- 固定パスワードの入口と、自動メール送信に対応したでやんす。公開ページからCloudflareでパスワードを照合し、テスト結果をResendで管理用宛先へ送るでやんす。公開ドメインからの認証・メール送信受付と、接続確認メール1通の配送完了を確認したでやんす。設定手順と保管場所は `docs/MAIL_SETUP.md` でやんす。
 
 ## 開発
 
@@ -36,11 +38,15 @@ node scripts/check-export.mjs
 
 GitHub Pagesなどサブディレクトリで公開するときは、ビルド時に `PAGES_BASE_PATH=/リポジトリ名` を指定するでやんす。独自ドメインやルート直下の場合は空文字でやんす。
 
-## GitHub Pages公開の準備
+## GitHub Pagesの公開と更新でやんす
 
-`.github/workflows/pages.yml` は手動実行専用でやんす。公開先の合意後、ソースを配置し、Settings → Pages → SourceをGitHub Actionsに設定して、Actionsから実行するでやんす。公開範囲の変更やワークフロー実行は、まだ行っていないでやんす。
+2026-09-10に `https://penpeita.github.io/kumowa/` で公開したでやんす。現在のPages設定は **Deploy from a branch → gh-pages → /(root)** でやんす。ソースはmain、検証済みの静的ファイルはgh-pagesに置いたでやんす。GitHub標準のPages配信が完了したことと、公開ファイル・画像の取得成功を確認したでやんす。
 
-接続中の `penpeita/penpeita` は別用途の非公開リポジトリでやんす。このアプリのために既存リポジトリ全体を公開状態へ変えないでやんす。専用の公開先はユーザー確認後に確定するでやんす。
+現在の方法で更新するときは、Node.js 22.22.0で検査し、`PAGES_BASE_PATH=/kumowa` と `VITE_REPORT_API_URL=https://kumowa-mail.yahoowaq.workers.dev` を指定してビルドするでやんす。`dist/client/kumowa/` の中身と空の `.nojekyll` をgh-pagesの直下へ登録するでやんす。mainのソース変更だけでは公開ページは更新されないでやんす。
+
+`.github/workflows/pages.yml` には検査・ビルド・公開の手動ワークフローも用意したでやんす。Repository variableのREPORT_API_URLは登録済みでやんす。このワークフロー自体は未実行で、使う場合は先にSettings → Pages → Sourceを **GitHub Actions** へ変更し、Actionsからmainを指定して実行するでやんす。
+
+既存の `penpeita/penpeita` は別用途の非公開リポジトリでやんす。このアプリの公開では変更していないでやんす。
 
 [GitHub公式：カスタムワークフローでPagesを公開する](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
 

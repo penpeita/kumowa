@@ -4,11 +4,12 @@
 
 ## 現在の状態でやんす
 
-- ローカル画面もCloudflareで固定パスワードを照合する設定へ切り替えたでやんす。開発専用の照合値は `.env.local` のみに残し、API接続がある場合は使わないでやんす。GitHubと配布ソースから除外し、本番ビルドにも含めないでやんす。
+- 公開アプリは `https://penpeita.github.io/kumowa/` でやんす。公開ドメインからのパスワード照合とメール送信受付を実サーバーで確認したでやんす。開発専用の照合値は `.env.local` のみに残し、GitHub・配布ソース・本番ビルドから除外するでやんす。
 - 本番はGitHub Pagesの画面から、`mail-worker/index.ts` の送信サービスに接続する設計でやんす。パスワードをサーバーで照合してから、一時的な認証を画面のメモリーだけに保持するでやんす。
 - テスト10問の終了時だけ、コース・日時・正解数・各問題・選んだ答え・正解を自動送信するでやんす。練習・復習では送らないでやんす。
 - Cloudflare Worker `kumowa-mail` を公開し、パスワード・送信キー・宛先など6設定をSecretに登録したでやんす。接続確認メールはResendで1通だけ表示され、Deliveredを確認したでやんす。受信箱のどのフォルダーに入ったかは未確認でやんす。
-- 接続先は `https://kumowa-mail.yahoowaq.workers.dev` でやんす。現在のAPP_ORIGINは `http://localhost:3000` でやんす。GitHub Pagesの公開先が確定したら、APP_ORIGINをそのドメインへ変更し、Repository variableのREPORT_API_URLにこの接続先を登録するでやんす。GitHubへの公開自体は未実施でやんす。
+- 接続先は `https://kumowa-mail.yahoowaq.workers.dev` でやんす。APP_ORIGINは `https://penpeita.github.io` に切り替え済みで、Repository variableのREPORT_API_URLも登録済みでやんす。入口パスワード・送信キー・実際の宛先はGitHubへ登録していないでやんす。
+- 現在の本番Workerはlocalhostからの接続を許可しないでやんす。ローカルの見た目や問題を開発するときは、開発環境だけでVITE_REPORT_API_URLを空にして開発用照合値を使うでやんす。実メールの確認は公開URLから行うでやんす。本番のAPP_ORIGINを開発用に書き換えないでやんす。
 
 ## 保管場所でやんす
 
@@ -22,7 +23,7 @@
 | APP_ORIGIN：PagesのURLのドメイン部分 | WorkersのSecretでやんす |
 | REPORT_API_URL：公開したWorkerのHTTPS URL | GitHub ActionsのRepository variableでやんす |
 
-例えば公開URLが `https://example.github.io/penpeita/` なら、APP_ORIGINは `https://example.github.io` でやんす。REPORT_API_URLには `/login` や `/report` を付けないでやんす。このURL自体は公開してよい接続先でやんす。
+このアプリの公開URLは `https://penpeita.github.io/kumowa/` で、APP_ORIGINは `https://penpeita.github.io` でやんす。REPORT_API_URLには `/login` や `/report` を付けないでやんす。このURL自体は公開してよい接続先でやんす。
 
 ## 設定担当者向け手順でやんす
 
@@ -47,8 +48,8 @@ npx wrangler deploy --config mail-worker/wrangler.jsonc
 ```
 
 3. GitHubのSettings → Secrets and variables → Actions → Variablesに、REPORT_API_URLを登録するでやんす。送信用APIキーや入口のパスワードを `VITE_` 設定へ入れないでやんす。
-4. Pagesの手動ワークフローを実行するでやんす。公開ソースに秘密値が含まれないことを確認するでやんす。
-5. 実際のテストを1回終え、送信受付表示、指定メールの受信、再読み込みしても同じメールが増えないことを確認するでやんす。実メールの受信確認が終わるまでは、運用開始済みとしないでやんす。
+4. 現在はgh-pagesブランチから公開しているでやんす。手動ワークフローを使う場合はPagesのSourceをGitHub Actionsへ変更してから実行するでやんす。READMEの更新手順に従い、公開ソースに秘密値が含まれないことを確認するでやんす。
+5. 接続確認データでメールの配送完了と公開ドメインからの送信受付を確認済みでやんす。次は実際のテストを1回終え、画面の送信受付表示と指定メールの受信を確認するでやんす。子供の実際の操作とGmail受信箱内の表示位置は未確認でやんす。
 
 ## 仕組みと限界でやんす
 
