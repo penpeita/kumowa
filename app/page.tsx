@@ -931,6 +931,7 @@ function PracticeApp({ session }: { session: AccessSession }) {
         <RotateCcw aria-hidden="true" />
         何度でも、自分のペースでやんす。
       </p>
+      <p className="voice-credit">声：VOICEVOX 春歌ナナでやんす。</p>
     </main>
   );
 }

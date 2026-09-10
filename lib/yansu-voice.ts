@@ -1,14 +1,8 @@
-// Optional prerecorded clips take priority. They are bundled locally, never
-// requested from an AI service while a child is using the app.
-const clips = import.meta.glob<string>('../assets/yansu-voice-*.{mp3,wav}', {
-  eager: true,
-  query: '?url',
-  import: 'default',
-});
-export function yansuVoiceClip(success: boolean): string | undefined {
-  const name = success ? 'correct' : 'wrong';
-  return (
-    clips[`../assets/yansu-voice-${name}.mp3`] ??
-    clips[`../assets/yansu-voice-${name}.wav`]
-  );
+import correctVoice from '../assets/yansu-voice-correct.mp3?url';
+import wrongVoice from '../assets/yansu-voice-wrong.mp3?url';
+
+// Required assets: a missing recording must fail the build instead of silently
+// changing Yansu's voice to the device's speech synthesizer.
+export function yansuVoiceClip(success: boolean): string {
+  return success ? correctVoice : wrongVoice;
 }

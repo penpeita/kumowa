@@ -108,7 +108,6 @@ export function useSoundEffects() {
   const contextRef = useRef<AudioContext | null>(null);
   const enabledRef = useRef(false);
   const activeNotes = useRef(new Set<OscillatorNode>());
-  const feedbackVoice = useRef<SpeechSynthesisUtterance | null>(null);
   const recordedVoice = useRef<HTMLAudioElement | null>(null);
 
   function stopNotes() {
@@ -134,10 +133,6 @@ export function useSoundEffects() {
       stopNotes();
       recordedVoice.current?.pause();
       recordedVoice.current = null;
-      if (feedbackVoice.current) {
-        window.speechSynthesis?.cancel();
-        feedbackVoice.current = null;
-      }
       void contextRef.current?.suspend().catch(() => {});
       return;
     }
@@ -173,44 +168,6 @@ export function useSoundEffects() {
             'ヤンス君の声が出せないでやんす。もう一度オンにするでやんす。',
           );
       });
-    }
-    if (
-      !clip &&
-      speak &&
-      'speechSynthesis' in window &&
-      'SpeechSynthesisUtterance' in window
-    ) {
-      try {
-        window.speechSynthesis.cancel();
-        const voice = new SpeechSynthesisUtterance(
-          success ? '正解でやんす！' : '外れでやんす！',
-        );
-        voice.lang = 'ja-JP';
-        const japanese = window.speechSynthesis
-          .getVoices()
-          .filter((item) => /^ja(?:[-_]|$)/i.test(item.lang));
-        const selected =
-          japanese.find((item) => item.localService) ?? japanese[0];
-        if (selected) voice.voice = selected;
-        voice.pitch = 1.3;
-        voice.rate = 1.05;
-        voice.volume = 0.85;
-        voice.onend = () => {
-          if (feedbackVoice.current === voice) feedbackVoice.current = null;
-        };
-        voice.onerror = (event) => {
-          if (feedbackVoice.current !== voice) return;
-          feedbackVoice.current = null;
-          if (event.error !== 'canceled' && event.error !== 'interrupted')
-            setError(
-              'ヤンス君の声が出せないでやんす。端末の日本語音声を確かめるでやんす。',
-            );
-        };
-        feedbackVoice.current = voice;
-        window.speechSynthesis.speak(voice);
-      } catch {
-        setError('ヤンス君の声が出せないでやんす。');
-      }
     }
     void context
       .resume()

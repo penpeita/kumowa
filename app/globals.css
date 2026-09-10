@@ -2270,6 +2270,12 @@ fieldset {
   width: 48px;
   height: 48px;
 }
+.voice-credit {
+  margin: 16px 0 0;
+  text-align: center;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+}
 .yansu-feedback-copy {
   display: grid;
   gap: 5px;
